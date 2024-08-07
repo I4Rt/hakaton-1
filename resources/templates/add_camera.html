@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Состояния</title>
+    <link href="../css/bootstrap.min.css"  rel="stylesheet" />
+    <style>
+        *{
+            border-radius: 5px;
+        }
+        .border-dark{
+            border: 2px solid #414141
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row flex-row flex-row justify-content-center header">
+            <h6>
+                Система обанружения аварийных операций
+            </h6>
+        </div>
+        <div class="row">
+            <div class="col-5 d-flex flex-column">
+                <h6>Путь</h6>
+                <input type="text" id="route">
+                <h6>Метка</h6>
+                <input type="text" id="name">
+                <button class="btn btn-info" id="add" onclick="add_camera()">
+                    Добавить
+                </button>
+            </div>
+        </div>
+    </div>
+    
+</body>
+
+<script src="../js/jquery-3.7.1.min.js"></script>
+<script>
+    function add_camera(){
+        let route = $('#route').val()
+        let name = $('#name').val()
+        
+        if (name.length == 0 || route.length == 0 ){
+            alert('Введите данные')
+        }
+        else{
+            $.ajax({
+                url: '/addCamera',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    "route": route,
+                    "name": name
+                }),
+                success: function(data) {
+                    if (data['/addCamera']){
+                        window.location.href = "/main"
+                    }
+                    else{
+                        alert('Не удалось добавить камеру');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('Не удалось добавить камеру:', status, error);
+                }
+            });
+        }
+    }
+
+
+</script>
+</html>

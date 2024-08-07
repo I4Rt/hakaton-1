@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Состояния</title>
+    <link href="../css/bootstrap.min.css"  rel="stylesheet" />
+    <style>
+        *{
+            border-radius: 5px;
+        }
+        .border-dark{
+            border: 2px solid #414141
+        }
+        .my-border-bottom{
+            border-bottom: 3px solid #414141
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row flex-row flex-row justify-content-center header my-border-bottom">
+            <h3>
+                Система обанружения аварийных операций
+            </h3>
+        </div>
+        <div class="row">
+            
+            <div class="col-5 d-flex flex-column">
+                <h6>Секция</h6>
+                <p>{{room_info['name']}}</p>
+                <h6>Камеры</h6>
+                <div class="row d-flex flex-column my-border m-1">
+                    {%for cam_info in room_info['cameras']%}
+                        <button class="d-flex flex-column align-items-start justify-content-start my-border m-1" onclick='popCamera({{cam_info["cam_id"]}})'>
+                            <h6><a href="/cameraPage?id={{cam_info['cam_id']}}">Камера {{cam_info["route"]}}</a></h6>
+                            <text>Статус - <text id="second_cam_status_{{cam_info['cam_id']}}">{{cam_info['status']}}</text></text>
+                        </button>
+                    {%endfor%}
+                </div>
+                
+                <a href="/main">На главную</a>
+            </div>
+            <div class="col-5">
+                <h6>Доступные камеры</h6>
+                {%for cam_info in camera_list%}
+                    <button class="d-flex flex-column align-items-start justify-content-start my-border m-1" onclick="addCamera({{room_info['group_id']}}, {{cam_info['cam_id']}})">
+                        <h6><a href="/cameraPage?id={{cam_info['cam_id']}}">Камера {{cam_info["route"]}}</a></h6>
+                        <text>Статус - <text id="second_cam_status_{{cam_info['cam_id']}}">{{cam_info['status']}}</text></text>
+                    </button>
+                {%endfor%}
+            </div>
+        </div>
+    </div>
+    
+</body>
+
+<script src="../js/jquery-3.7.1.min.js"></script>
+<script>
+    function addCamera(room_id, cam_id){
+        
+        $.ajax({
+            url: `/addCameraToGroup`,
+            method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    "cam_id": parseInt(cam_id),
+                    "group_id": parseInt(room_id)
+                }),
+            success: function(data) {
+                if (data['/addCameraToGroup']){
+                    window.location.reload();
+                }
+                else{
+                    alert('Ошибка')
+                }
+                
+            },
+        });
+    }
+
+    function popCamera(cam_id){
+        
+        $.ajax({
+            url: `/separateCamera`,
+            method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    "cam_id": parseInt(cam_id)
+                }),
+            success: function(data) {
+                if (data['/separateCamera']){
+                    window.location.reload();
+                }
+                else{
+                    alert('Ошибка')
+                }
+                
+            },
+        });
+    }
+
+</script>
+</html>

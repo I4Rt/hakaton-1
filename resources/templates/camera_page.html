@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Состояния</title>
+    <link href="../css/bootstrap.min.css"  rel="stylesheet" />
+    <style>
+        *{
+            border-radius: 5px;
+        }
+        .border-dark{
+            border: 2px solid #414141
+        }
+        .my-border-bottom{
+            border-bottom: 3px solid #414141
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row flex-row flex-row justify-content-center header my-border-bottom">
+            <h3>
+                Система обанружения аварийных операций
+            </h3>
+        </div>
+        <div class="row">
+            <div class="col-5">
+                <img id="viewer" class="w-100">
+            </div>
+            <div class="col-5 d-flex flex-column">
+                <h6>Путь</h6>
+                <p id="route">{{camera.route}}</p>
+                <h6>Метка</h6>
+                <p>{{camera.name}}</p>
+                <h6>ID Сектора</h6>
+                <p>{{camera.sector_id}}</p>
+                <a href="/main">На главную</a>
+            </div>
+        </div>
+    </div>
+    
+</body>
+
+<script src="../js/jquery-3.7.1.min.js"></script>
+<script>
+    function init_video(){
+        let route = $('#route').html()
+        $.ajax({
+            url: `/initVideo?route=${route}`,
+            method: 'GET',
+            success: function(data) {
+                data=JSON.parse(data)
+
+                if (data['init']){
+                    console.log('inited')
+                    setInterval(update_image, 500)
+                    setInterval(refresh_image, 5000)
+                }
+                else{
+                    alert('Не удалось подключиться к камере 1');
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('Не удалось подключиться к камере', status, error);
+            }
+        });
+        
+    }
+
+    function update_image(){
+        let route =$('#route').html()
+        $.ajax({
+            url: `/getFrame?route=${route}`,
+            method: 'GET',
+            success: function(data) {
+                data=JSON.parse(data)
+                let baseStr64=data["frame"];
+                $("#viewer").attr('src', "data:image/jpg;base64," + baseStr64);
+                
+            },
+        });
+    }
+
+    function refresh_image(){
+        let route = $('#route').html()
+        $.ajax({
+            url: `/refreshVideo?route=${route}`,
+            method: 'GET',
+        });
+    }
+
+    init_video()
+
+</script>
+</html>

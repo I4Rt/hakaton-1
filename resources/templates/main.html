@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Состояния</title>
+    <link href="../css/bootstrap.min.css"  rel="stylesheet" />
+    <style>
+        *{
+            border-radius: 5px;
+        }
+        .my-border{
+            border: 2px solid #414141
+        }
+        .my-border-bottom{
+            border-bottom: 3px solid #414141
+        }
+        a{
+            color: black;
+            
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row flex-row flex-row justify-content-center header my-border-bottom">
+            <h3>
+                Система обанружения аварийных операций
+            </h3>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                <h4>Камеры</h4>
+                <a href="/addCameraPage" id="add_camera" class="btn btn-info">
+                    Добавить камеру
+                </a>
+                <div class="d-flex flex-column my-border m-3">
+                    {%for cam_info in camera_list%}
+                        <div class=" d-flex flex-column align-items-start justify-content-start my-border m-1">
+                            <h6><a href="/cameraPage?id={{cam_info['cam_id']}}">Камера {{cam_info["name"]}}</a></h6>
+                            <text>Route {{cam_info["route"]}}</text>
+                            <text>Статус - <text id="cam_status_{{cam_info['cam_id']}}">{{cam_info['status']}}</text></text>
+                        </div>
+                    {%endfor%}
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="row">
+                    <h4>Сектора</h4>
+                    <a href="/addGroupPage" id="add_sector" class="btn btn-info">
+                        Добавить сектор
+                    </a>
+                </div>
+
+                <div class="d-flex flex-column flex-wrap my-border m-3">
+                    {%for room_info in room_list%}
+                        <div class="d-flex flex-column align-items-start justify-content-start my-border m-1" style="width: fit-content; !important; min-width: 200px;">
+                            <h6><a href="/groupPage?id={{room_info['group_id']}}">Сектор - {{room_info["name"]}}</a></h6>
+                            <div class="row d-flex flex-column my-border m-1">
+                                {%for cam_info in room_info['cameras']%}
+                                    <div class="container d-flex flex-column align-items-start justify-content-start my-border m-1">
+                                        <h6><a href="/cameraPage?id={{cam_info['cam_id']}}">Камера {{cam_info["route"]}}</a></h6>
+                                        <text>Статус - <text id="second_cam_status_{{cam_info['cam_id']}}">{{cam_info['status']}}</text></text>
+                                    </div>
+                                {%endfor%}
+                            </div>
+                        </div>
+                    {%endfor%}
+
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</body>
+
+<script src="../js/jquery-3.7.1.min.js"></script>
+<script>
+   function update(){
+    window.location.reload()
+   }
+
+   setInterval(update, 3000)
+</script>
+</html>
